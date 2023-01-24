@@ -1,53 +1,48 @@
-# code adapted from https://towardsdatascience.com/visualizing-part-of-speech-tags-with-nltk-and-spacy-42056fcd777e
+"""
+Tags adjectives and adverbs in a text file and saves the result as an html file.
+code adapted from https://towardsdatascience.com/visualizing-part-of-speech-tags-with-nltk-and-spacy-42056fcd777e
+"""
+
 import spacy
 from spacy import displacy
-import nltk
-from nltk.tokenize import TreebankWordTokenizer as twt
-
-
-# Load English tokenizer, tagger, parser and NER
-nlp = spacy.load("en_core_web_sm")
 
 # read article
-with open('hindutva-pop.txt') as f:
+with open('article.txt') as f:
     text = f.read()
 
-def visualize_pos(text):
-    pos_tags = ["ADJ", "ADV"]
-    
-    # Tokenize text and pos tag each token
-    tokens = twt().tokenize(text)
-    tags = nltk.pos_tag(tokens, tagset = "universal")
+# load spacy model
+nlp = spacy.load("en_core_web_sm")
+doc = nlp(text)
 
-    # Get start and end index (span) for each token
-    span_generator = twt().span_tokenize(text)
-    spans = [span for span in span_generator]
+# entities to be tagged
+ents = []
 
-    # Create dictionary with start index, end index, 
-    # pos_tag for each token
-    ents = []
-    for tag, span in zip(tags, spans):
-        if tag[1] in pos_tags:
-            ents.append({"start" : span[0], 
-                         "end" : span[1], 
-                         "label" : tag[1] })
+# parts of speech we care about
+pos_tags = ["ADJ", "ADV"]
 
-    doc = {"text" : text, "ents" : ents}
+# loop through toekns
+for token in doc:
+    # if the token is an adjective or adverb, add it to the list of entities
+    if token.pos_ in pos_tags:
+        ents.append({"start" : token.idx, 
+                    "end" : token.idx + len(token), 
+                    "label" : token.pos_})
 
-    colors = {
-              "ADJ" : "lime",
-              "ADV" : "orange"
-              }
-    
-    options = {"ents" : pos_tags, "colors" : colors}
-    
-    return displacy.render(doc, 
-                    style = "ent", 
-                    options = options, 
-                    manual = True,
-                   )
+# create doc object
+doc = {"text" : text, "ents" : ents}
 
+# create options for displacy
+colors = {
+            "ADJ" : "lime",
+            "ADV" : "orange"
+            }
+options = {"ents" : pos_tags, "colors" : colors}
+html = displacy.render(doc, 
+                style = "ent", 
+                options = options, 
+                manual = True,
+                )
 
-html = visualize_pos(text)
+# save html file
 with open(f"tagged.html", "w") as f:
     f.write(html)
