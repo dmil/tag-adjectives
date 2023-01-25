@@ -8,4 +8,6 @@ Code adapted from https://towardsdatascience.com/visualizing-part-of-speech-tags
 
 `tag-adjectives.py` reads `article.txt` and prodcues some nice HTML with the adjectives tagged.
 
-`tagged-article.html` contains the article after part of speech tagging has been applied to identify adjectives and adverbs
+`tagged-article.html` contains the article after part of speech tagging has been applied to identify adjectives and adverbs. The result looks something like this:
+
+![](image.png)
