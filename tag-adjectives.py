@@ -44,5 +44,5 @@ html = displacy.render(doc,
                 )
 
 # save html file
-with open(f"tagged.html", "w") as f:
+with open(f"tagged-article.html", "w") as f:
     f.write(html)
